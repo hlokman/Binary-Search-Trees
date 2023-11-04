@@ -171,9 +171,9 @@ const Tree = (array = []) => {
     if (node === null) {
       return result;
     }
-    preorder(callback, node.leftChild);
+    inorder(callback, node.leftChild);
     callback(node); //callback (might be default one) used
-    preorder(callback, node.rightChild);
+    inorder(callback, node.rightChild);
     return result;
   }
 
@@ -190,10 +190,53 @@ const Tree = (array = []) => {
     if (node === null) {
       return result;
     }
-    preorder(callback, node.leftChild);
-    preorder(callback, node.rightChild);
+    postorder(callback, node.leftChild);
+    postorder(callback, node.rightChild);
     callback(node); //callback (might be default one) used
     return result;
+  }
+
+  //----------HEIGHT
+  function height(node = root) {
+    if (node === null) {
+      return 0; //base case
+    } else {
+      return Math.max(height(node.leftChild) + 1, height(node.rightChild) + 1);
+    }
+  }
+
+  //----------DEPTH
+  function depth(value, rootNode = root) {
+    if (find(value, rootNode) === null) {
+      return -1;
+    }
+
+    if (rootNode === null) {
+      return 0; //
+    }
+    return Math.max(
+      depth(value, rootNode.leftChild) + 1,
+      depth(value, rootNode.rightChild) + 1
+    );
+  }
+
+  //----------ISBALANCED
+  function isBalanced(node = root) {
+    if (node === null) {
+      return true;
+    }
+    return (
+      //below: return boolean
+      Math.abs(height(node.leftChild) - height(node.rightChild)) <= 1 &&
+      isBalanced(node.leftChild) &&
+      isBalanced(node.rightChild)
+    );
+  }
+
+  //----------REBALANCE
+  function rebalance() {
+    this.root = buildTree(inorder()); //in order to change the tree.root when we call the tree
+    root = buildTree(inorder()); //in order to redefine the ""actual"" root value (first defined with let root = buildTree(array) above)
   }
 
   //----------PRINT THE TREE
@@ -216,6 +259,7 @@ const Tree = (array = []) => {
   };
 
   return {
+    root,
     buildTree,
     prettyPrint,
     insertNode,
@@ -225,6 +269,9 @@ const Tree = (array = []) => {
     preorder,
     inorder,
     postorder,
-    root,
+    height,
+    depth,
+    isBalanced,
+    rebalance,
   };
 };
