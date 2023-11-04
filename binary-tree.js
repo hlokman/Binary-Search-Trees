@@ -37,20 +37,21 @@ const Tree = (array = []) => {
   function insertNode(value, node = root) {
     if (node.value === value) {
       return;
-    }
-
-    //the base case (if you add a Node, the node supposed to be above is necessarily "alone" so doesn't have a left or right child yet)
-    if (node.leftChild === null && node.rightChild === null) {
-      if (value > node.value) {
-        node.rightChild = Node(value);
-      } else if (value < node.value) {
+    } //if value < node.value
+    else if (node.value > value) {
+      if (node.leftChild) {
+        //call the function recursively until the node is "alone": if you add a Node, the node supposed to be above is necessarily "alone" so doesn't have a left or right child yet
+        insertNode(value, node.leftChild);
+      } else {
         node.leftChild = Node(value);
       }
-      //call the function recursively (until it "hits" the base case)
-    } else if (value < node.value) {
-      insertNode(value, node.leftChild);
-    } else if (value > node.value) {
-      insertNode(value, node.rightChild);
+    } //if value > node.value
+    else {
+      if (node.rightChild) {
+        insertNode(value, node.rightChild);
+      } else {
+        node.rightChild = Node(value);
+      }
     }
   }
 
@@ -236,32 +237,12 @@ const Tree = (array = []) => {
   //----------REBALANCE
   function rebalance() {
     this.root = buildTree(inorder()); //in order to change the tree.root when we call the tree
-    root = buildTree(inorder()); //in order to redefine the ""actual"" root value (first defined with let root = buildTree(array) above)
+    root = buildTree(inorder()); //in order to redefine the ""actual"" root value (first defined with let root = buildTree(array) above and which is used in the other functions)
   }
-
-  //----------PRINT THE TREE
-  //console.log the tree in a structured format
-  const prettyPrint = (node, prefix = "", isLeft = true) => {
-    if (node === null) {
-      return;
-    }
-    if (node.rightChild !== null) {
-      prettyPrint(
-        node.rightChild,
-        `${prefix}${isLeft ? "│   " : "    "}`,
-        false
-      );
-    }
-    console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.value}`);
-    if (node.leftChild !== null) {
-      prettyPrint(node.leftChild, `${prefix}${isLeft ? "    " : "│   "}`, true);
-    }
-  };
 
   return {
     root,
     buildTree,
-    prettyPrint,
     insertNode,
     find,
     deleteNode,
@@ -275,3 +256,46 @@ const Tree = (array = []) => {
     rebalance,
   };
 };
+
+//----------PRINT THE TREE
+//console.log the tree in a structured format
+const prettyPrint = (node, prefix = "", isLeft = true) => {
+  if (node === null) {
+    return;
+  }
+  if (node.rightChild !== null) {
+    prettyPrint(node.rightChild, `${prefix}${isLeft ? "│   " : "    "}`, false);
+  }
+  console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.value}`);
+  if (node.leftChild !== null) {
+    prettyPrint(node.leftChild, `${prefix}${isLeft ? "    " : "│   "}`, true);
+  }
+};
+
+//----------SCRIPT
+function randomArray(size) {
+  return Array.from({ length: size }, () => Math.floor(Math.random() * 100)); //will call Math.floor for each element (*100 to get random numbers < 100)
+}
+
+const newTree = Tree(randomArray(18));
+prettyPrint(newTree.root);
+console.log("Balanced:", newTree.isBalanced());
+console.log("Level-order traversal:", newTree.levelOrder());
+console.log("Preorder traversal:", newTree.preorder());
+console.log("Inorder traversal:", newTree.inorder());
+console.log("Postorder traversal:", newTree.postorder());
+
+newTree.insertNode(333);
+newTree.insertNode(364);
+newTree.insertNode(874);
+newTree.insertNode(659);
+newTree.insertNode(2111);
+prettyPrint(newTree.root);
+console.log("Balanced:", newTree.isBalanced());
+newTree.rebalance();
+prettyPrint(newTree.root);
+console.log("Balanced:", newTree.isBalanced());
+console.log("Level-order traversal:", newTree.levelOrder());
+console.log("Preorder traversal:", newTree.preorder());
+console.log("Inorder traversal:", newTree.inorder());
+console.log("Postorder traversal:", newTree.postorder());
