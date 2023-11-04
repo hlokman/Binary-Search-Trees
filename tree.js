@@ -3,7 +3,7 @@ const Node = (value, leftChild = null, rightChild = null) => {
 };
 
 const Tree = (array = []) => {
-  //BUILD TREE
+  //----------BUILD TREE
   function buildTree(array) {
     if (array.length === 0) {
       return null;
@@ -33,7 +33,7 @@ const Tree = (array = []) => {
   }
   let root = buildTree(array); //! to put root in the return statement and make the (arranged) tree available when Tree(array) is called (with an array within)
 
-  //INSERT
+  //----------INSERT
   function insertNode(value, node = root) {
     if (node.value === value) {
       return;
@@ -54,7 +54,7 @@ const Tree = (array = []) => {
     }
   }
 
-  //FIND
+  //----------FIND
   function find(value, node = root) {
     //base case: if the value is find (node.value === value) return node (which shows value, left and right child)
     // or if the value doesn't exist return node (since in that case node === null)
@@ -82,7 +82,7 @@ const Tree = (array = []) => {
     return min;
   }
 
-  //DELETE
+  //----------DELETE
   function deleteNode(value, node = root) {
     if (node === null || find(value) === null) {
       return null;
@@ -112,7 +112,91 @@ const Tree = (array = []) => {
     return node;
   }
 
-  //PRINT THE TREE
+  //----------LEVEL ORDER (Breadth-first traversal)
+  //use queue logic
+  //if no function is given, return array of values
+  function levelOrder(callback) {
+    const queue = [root];
+    const result = [];
+    //define default callback if no callback entered
+    if (typeof callback === "undefined") {
+      callback = (node) => {
+        result.push(node.value);
+      };
+    }
+
+    while (queue.length !== 0) {
+      const node = queue.shift();
+      if (node.leftChild !== null) {
+        queue.push(node.leftChild);
+      }
+      if (node.rightChild !== null) {
+        queue.push(node.rightChild);
+      }
+      callback(node); //callback (might be default one) used
+    }
+
+    return result;
+  }
+
+  //----------DEPTH-FIRST TRAVERSAL 1 = Preorder
+  function preorder(callback, node = root) {
+    const result = [];
+    //define default callback if no callback entered
+    if (typeof callback === "undefined") {
+      callback = (node) => {
+        result.push(node.value);
+      };
+    }
+    //base case (?)
+    if (node === null) {
+      return result;
+    }
+    callback(node); //callback (might be default one) used
+    preorder(callback, node.leftChild);
+    preorder(callback, node.rightChild);
+    return result;
+  }
+
+  //----------DEPTH-FIRST TRAVERSAL 2 = Inorder
+  function inorder(callback, node = root) {
+    const result = [];
+    //define default callback if no callback entered
+    if (typeof callback === "undefined") {
+      callback = (node) => {
+        result.push(node.value);
+      };
+    }
+    //base case (?)
+    if (node === null) {
+      return result;
+    }
+    preorder(callback, node.leftChild);
+    callback(node); //callback (might be default one) used
+    preorder(callback, node.rightChild);
+    return result;
+  }
+
+  //----------DEPTH-FIRST TRAVERSAL 3 = Postorder
+  function postorder(callback, node = root) {
+    const result = [];
+    //define default callback if no callback entered
+    if (typeof callback === "undefined") {
+      callback = (node) => {
+        result.push(node.value);
+      };
+    }
+    //base case (?)
+    if (node === null) {
+      return result;
+    }
+    preorder(callback, node.leftChild);
+    preorder(callback, node.rightChild);
+    callback(node); //callback (might be default one) used
+    return result;
+  }
+
+  //----------PRINT THE TREE
   //console.log the tree in a structured format
   const prettyPrint = (node, prefix = "", isLeft = true) => {
     if (node === null) {
@@ -131,5 +215,16 @@ const Tree = (array = []) => {
     }
   };
 
-  return { buildTree, prettyPrint, insertNode, find, deleteNode, root };
+  return {
+    buildTree,
+    prettyPrint,
+    insertNode,
+    find,
+    deleteNode,
+    levelOrder,
+    preorder,
+    inorder,
+    postorder,
+    root,
+  };
 };
