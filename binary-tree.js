@@ -246,6 +246,10 @@ class Tree {
 }
 
 //----------Script
+function randomArray(size) {
+  return Array.from({ length: size }, () => Math.floor(Math.random() * 100)); //will call Math.floor for each element (*100 to get random numbers < 100)
+}
+
 const newTree = new Tree(randomArray(18));
 newTree.prettyPrint();
 console.log("Balanced:", newTree.isBalanced());
